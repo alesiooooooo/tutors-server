@@ -1,11 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBadRequestResponse,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from './auth.dto';
 
@@ -14,59 +8,39 @@ import { AuthDto } from './auth.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('signup')
   @ApiOperation({ summary: 'Register a new user' })
+  @ApiBody({ type: AuthDto })
   @ApiResponse({
     status: 201,
     description: 'User successfully created',
     schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'User created successfully' },
-      },
-    },
-  })
-  @ApiBadRequestResponse({
-    description: 'Email already taken or validation error',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Email already taken' },
-        error: { type: 'string', example: 'Bad Request' },
-        statusCode: { type: 'number', example: 400 },
-      },
-    },
-  })
-  @Post('signup')
-  signup(@Body() dto: AuthDto) {
-    return this.authService.signup(dto);
-  }
-
-  @ApiOperation({ summary: 'Login user' })
-  @ApiResponse({
-    status: 201,
-    description: 'User successfully logged in',
-    schema: {
-      type: 'object',
-      properties: {
-        access_token: {
-          type: 'string',
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+      example: {
+        user: {
+          id: 1,
+          email: 'user@example.com',
         },
       },
     },
   })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid credentials',
+  @ApiResponse({ status: 400, description: 'Email already taken' })
+  signup(@Body() dto: AuthDto) {
+    return this.authService.signup(dto);
+  }
+
+  @Post('login')
+  @ApiOperation({ summary: 'Login user' })
+  @ApiBody({ type: AuthDto })
+  @ApiResponse({
+    status: 201,
+    description: 'User successfully logged in',
     schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Invalid credentials' },
-        error: { type: 'string', example: 'Unauthorized' },
-        statusCode: { type: 'number', example: 401 },
+      example: {
+        access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
       },
     },
   })
-  @Post('login')
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
   login(@Body() dto: AuthDto) {
     return this.authService.login(dto);
   }

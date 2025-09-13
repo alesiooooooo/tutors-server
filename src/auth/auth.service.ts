@@ -7,7 +7,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '../user';
+import { User } from 'src/user/user.entity';
 import { AuthDto } from './auth.dto';
 
 @Injectable()
@@ -31,9 +31,9 @@ export class AuthService {
       password: passwordHash,
     });
 
-    await this.userRepo.save(user);
+    const savedUser = await this.userRepo.save(user);
 
-    return { message: 'User created successfully' };
+    return { user: { id: savedUser.id, email: savedUser.email } };
   }
 
   async login(dto: AuthDto) {

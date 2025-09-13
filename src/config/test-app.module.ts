@@ -1,24 +1,27 @@
 import { Module } from '@nestjs/common';
-import { AppController, AppService } from '../';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { UserModule } from '../user';
-import { BookingModule } from '../booking';
-import { TutorModule } from '../tutor';
-import { AuthModule } from '../auth';
-import { TestDatabaseModule } from './test-database.module';
+import { AuthModule } from '../auth/auth.module';
+import { BookingModule } from '../booking/booking.module';
+import { UserModule } from '../user/user.module';
+import { TutorModule } from '../tutor/tutor.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env.test',
     }),
-    TestDatabaseModule,
-    UserModule,
-    BookingModule,
-    TutorModule,
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: ':memory:',
+      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
     AuthModule,
+    BookingModule,
+    UserModule,
+    TutorModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class TestAppModule {}

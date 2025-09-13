@@ -10,7 +10,7 @@ export class AuthDto {
   email: string;
 
   @ApiProperty({
-    description: 'User password',
+    description: 'User password (minimum 6 characters)',
     example: 'password123',
     minLength: 6,
   })

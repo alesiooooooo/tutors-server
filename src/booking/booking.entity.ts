@@ -1,5 +1,5 @@
-import { Tutor } from 'src/tutor/tutor.entity';
-import { User } from 'src/user/user.entity';
+import { Tutor } from '../tutor';
+import { User } from '../user';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 @Entity('booking')
 export class Booking {

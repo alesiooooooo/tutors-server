@@ -1,7 +1,7 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
-import { Tutor } from 'src/tutor/tutor.entity';
-import { Booking } from 'src/booking/booking.entity';
+import { User } from '../user';
+import { Tutor } from '../tutor';
+import { Booking } from '../booking';
 
 export const TestDatabaseModule = TypeOrmModule.forRoot({
   type: 'sqlite',

@@ -9,10 +9,10 @@ export class Booking {
   @Column()
   title: string;
 
-  @Column({ type: 'timestamptz' })
+  @Column()
   startTime: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column()
   endTime: Date;
 
   @ManyToOne(() => User, (user) => user.bookings, { onDelete: 'CASCADE' })

@@ -1,0 +1,47 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tutors-postgres
+    environment:
+      POSTGRES_DB: tutors
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - tutors-network
+
+  # NestJS Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tutors-app
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_NAME: tutors
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      NODE_ENV: production
+    ports:
+      - '3010:3000'
+    depends_on:
+      - postgres
+    networks:
+      - tutors-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: pnpm start:dev
+
+volumes:
+  postgres_data:
+
+networks:
+  tutors-network:
+    driver: bridge

@@ -6,11 +6,13 @@ services:
     environment:
       POSTGRES_DB: tutors
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: Xk8mN9pQ2vW7eR5tY3uI6oP1zL4sD8kF
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+    expose:
+      - '5432'
+    # PostgreSQL is only accessible within Docker network
+    # No external port mapping for security
     networks:
       - tutors-network
 
@@ -19,12 +21,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: tutors-app
+    container_name: tutors-server
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
-      DB_PASSWORD: password
+      DB_PASSWORD: Xk8mN9pQ2vW7eR5tY3uI6oP1zL4sD8kF
       DB_NAME: tutors
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       NODE_ENV: production

@@ -32,7 +32,7 @@ export class BookingService {
 
     if (overlappingBooking) {
       throw new BadRequestException(
-        'Tutor is not available during this time period. Booking conflicts with existing booking.',
+        'Tutor is not available during this time period.',
       );
     }
 

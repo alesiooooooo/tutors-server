@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
-import { App } from 'supertest/types';
 import { TestAppModule } from '../src/config/test-app.module';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -226,6 +225,49 @@ describe('BookingController (e2e)', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send(nonOverlappingBooking)
         .expect(201);
+    });
+
+    it('should return 400 when user has overlapping booking with themselves', async () => {
+      // Create first booking for user
+      const firstBooking = {
+        tutorId: testTutor.id,
+        date: '2024-12-25',
+        startTime: '10:00',
+        endTime: '12:00',
+      };
+
+      await request(app.getHttpServer())
+        .post('/booking')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(firstBooking)
+        .expect(201);
+
+      // Create another tutor
+      const secondTutor = await tutorRepository.save({
+        email: 'tutor2@test.com',
+        password: 'password123',
+        name: 'Second Tutor',
+        subject: 'Physics',
+        hourlyRate: 60,
+      });
+
+      // Try to create overlapping booking with different tutor (should fail because user is busy)
+      const overlappingUserBooking = {
+        tutorId: secondTutor.id, // Different tutor
+        date: '2024-12-25', // Same date
+        startTime: '11:00', // Overlaps with first booking (10:00-12:00)
+        endTime: '13:00',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/booking')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(overlappingUserBooking)
+        .expect(400);
+
+      expect(response.body.message).toContain(
+        'You already have a lesson scheduled at this time',
+      );
     });
   });
 

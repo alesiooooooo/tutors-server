@@ -17,9 +17,7 @@ export class BookingService {
 
   async create(createBookingDto: CreateBookingDto, userId: number) {
     const { tutorId, date, startTime, endTime } = createBookingDto;
-
-    // Check for overlapping bookings for the same tutor on the same date
-    const overlappingBooking = await this.bookingRepo
+    const overlappingTutorBooking = await this.bookingRepo
       .createQueryBuilder('booking')
       .leftJoin('booking.tutor', 'tutor')
       .where('tutor.id = :tutorId', { tutorId })
@@ -30,9 +28,26 @@ export class BookingService {
       )
       .getOne();
 
-    if (overlappingBooking) {
+    if (overlappingTutorBooking) {
       throw new BadRequestException(
         'Tutor is not available during this time period.',
+      );
+    }
+
+    const overlappingUserBooking = await this.bookingRepo
+      .createQueryBuilder('booking')
+      .leftJoin('booking.user', 'user')
+      .where('user.id = :userId', { userId })
+      .andWhere('booking.date = :date', { date })
+      .andWhere(
+        '(booking.startTime < :endTime AND booking.endTime > :startTime)',
+        { startTime, endTime },
+      )
+      .getOne();
+
+    if (overlappingUserBooking) {
+      throw new BadRequestException(
+        'You already have a lesson scheduled at this time. Please choose a different time slot.',
       );
     }
 

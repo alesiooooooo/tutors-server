@@ -295,6 +295,50 @@ describe('BookingController (e2e)', () => {
       );
     });
 
+    it('should return 400 when trying to book a lesson today but in the past time', async () => {
+      const today = new Date();
+      const todayString = today.toISOString().split('T')[0];
+
+      // Create a time that's definitely in the past (early morning)
+      const pastTimeBooking = {
+        tutorId: testTutor.id,
+        date: todayString,
+        startTime: '01:00', // 1 AM should be in the past
+        endTime: '02:00',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/booking')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(pastTimeBooking)
+        .expect(400);
+
+      expect(response.body.message).toContain(
+        'Cannot book a lesson in the past',
+      );
+    });
+
+    it('should allow booking today if time is in the future', async () => {
+      const today = new Date();
+      const todayString = today.toISOString().split('T')[0];
+
+      // Create a time that's definitely in the future (late evening)
+      const futureTimeBooking = {
+        tutorId: testTutor.id,
+        date: todayString,
+        startTime: '23:00', // 11 PM should be in the future
+        endTime: '23:30',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/booking')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(futureTimeBooking)
+        .expect(201);
+
+      expect(response.body.id).toBeDefined();
+    });
+
     it('should prioritize past date error over tutor availability error', async () => {
       // First create a booking for tutor in the future to make them "unavailable"
       const futureBooking = {

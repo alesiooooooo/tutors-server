@@ -18,27 +18,12 @@ export class BookingService {
   async create(createBookingDto: CreateBookingDto, userId: number) {
     const { tutorId, date, startTime, endTime } = createBookingDto;
 
-    const currentDate = new Date().toISOString().split('T')[0];
-    if (date < currentDate) {
-      throw new BadRequestException(
-        'Cannot book a lesson in the past. Please choose a future date.',
-      );
-    }
+    const lessonDateTime = new Date(`${date}T${startTime}:00Z`);
+    const now = new Date();
 
-    const overlappingTutorBooking = await this.bookingRepo
-      .createQueryBuilder('booking')
-      .leftJoin('booking.tutor', 'tutor')
-      .where('tutor.id = :tutorId', { tutorId })
-      .andWhere('booking.date = :date', { date })
-      .andWhere(
-        '(booking.startTime < :endTime AND booking.endTime > :startTime)',
-        { startTime, endTime },
-      )
-      .getOne();
-
-    if (overlappingTutorBooking) {
+    if (lessonDateTime <= now) {
       throw new BadRequestException(
-        'Tutor is not available during this time period.',
+        'Cannot book a lesson in the past. Please choose a future date and time.',
       );
     }
 
@@ -56,6 +41,23 @@ export class BookingService {
     if (overlappingUserBooking) {
       throw new BadRequestException(
         'You already have a lesson scheduled at this time. Please choose a different time slot.',
+      );
+    }
+
+    const overlappingTutorBooking = await this.bookingRepo
+      .createQueryBuilder('booking')
+      .leftJoin('booking.tutor', 'tutor')
+      .where('tutor.id = :tutorId', { tutorId })
+      .andWhere('booking.date = :date', { date })
+      .andWhere(
+        '(booking.startTime < :endTime AND booking.endTime > :startTime)',
+        { startTime, endTime },
+      )
+      .getOne();
+
+    if (overlappingTutorBooking) {
+      throw new BadRequestException(
+        'Tutor is not available during this time period.',
       );
     }
 

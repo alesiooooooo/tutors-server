@@ -17,6 +17,14 @@ export class BookingService {
 
   async create(createBookingDto: CreateBookingDto, userId: number) {
     const { tutorId, date, startTime, endTime } = createBookingDto;
+
+    const currentDate = new Date().toISOString().split('T')[0];
+    if (date < currentDate) {
+      throw new BadRequestException(
+        'Cannot book a lesson in the past. Please choose a future date.',
+      );
+    }
+
     const overlappingTutorBooking = await this.bookingRepo
       .createQueryBuilder('booking')
       .leftJoin('booking.tutor', 'tutor')

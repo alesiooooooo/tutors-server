@@ -89,7 +89,7 @@ describe('BookingController (e2e)', () => {
     it('should create a new booking', async () => {
       const bookingData = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '11:00',
       };
@@ -111,7 +111,9 @@ describe('BookingController (e2e)', () => {
     it('should return 400 for invalid booking data', async () => {
       const invalidBookingData = {
         tutorId: testTutor.id,
-        // Missing required fields
+        date: '2026-12-25',
+        startTime: '10:00',
+        // Missing endTime
       };
 
       await request(app.getHttpServer())
@@ -124,7 +126,7 @@ describe('BookingController (e2e)', () => {
     it('should return 401 without auth token', async () => {
       const bookingData = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '11:00',
       };
@@ -139,7 +141,7 @@ describe('BookingController (e2e)', () => {
       // Create first booking
       const firstBooking = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '12:00',
       };
@@ -153,7 +155,7 @@ describe('BookingController (e2e)', () => {
       // Try to create overlapping booking (same tutor, same date, overlapping time)
       const overlappingBooking = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '11:00', // Overlaps with first booking (10:00-12:00)
         endTime: '13:00',
       };
@@ -171,7 +173,7 @@ describe('BookingController (e2e)', () => {
       // Create first booking
       const firstBooking = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '12:00',
       };
@@ -185,7 +187,7 @@ describe('BookingController (e2e)', () => {
       // Create booking on different date (should succeed)
       const differentDateBooking = {
         tutorId: testTutor.id,
-        date: '2024-12-26', // Different date
+        date: '2026-12-26', // Different date
         startTime: '10:00',
         endTime: '12:00',
       };
@@ -201,7 +203,7 @@ describe('BookingController (e2e)', () => {
       // Create first booking
       const firstBooking = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '12:00',
       };
@@ -215,7 +217,7 @@ describe('BookingController (e2e)', () => {
       // Create non-overlapping booking (same date, but different time slot)
       const nonOverlappingBooking = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '14:00', // Non-overlapping time
         endTime: '16:00',
       };
@@ -231,7 +233,7 @@ describe('BookingController (e2e)', () => {
       // Create first booking for user
       const firstBooking = {
         tutorId: testTutor.id,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '12:00',
       };
@@ -254,7 +256,7 @@ describe('BookingController (e2e)', () => {
       // Try to create overlapping booking with different tutor (should fail because user is busy)
       const overlappingUserBooking = {
         tutorId: secondTutor.id, // Different tutor
-        date: '2024-12-25', // Same date
+        date: '2026-12-25', // Same date
         startTime: '11:00', // Overlaps with first booking (10:00-12:00)
         endTime: '13:00',
       };
@@ -269,6 +271,70 @@ describe('BookingController (e2e)', () => {
         'You already have a lesson scheduled at this time',
       );
     });
+
+    it('should return 400 when trying to book a lesson in the past', async () => {
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1); // Yesterday
+      const pastDateString = pastDate.toISOString().split('T')[0];
+
+      const pastBooking = {
+        tutorId: testTutor.id,
+        date: pastDateString,
+        startTime: '10:00',
+        endTime: '11:00',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/booking')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(pastBooking)
+        .expect(400);
+
+      expect(response.body.message).toContain(
+        'Cannot book a lesson in the past',
+      );
+    });
+
+    it('should prioritize past date error over tutor availability error', async () => {
+      // First create a booking for tutor in the future to make them "unavailable"
+      const futureBooking = {
+        tutorId: testTutor.id,
+        date: '2026-12-25',
+        startTime: '10:00',
+        endTime: '12:00',
+      };
+
+      await request(app.getHttpServer())
+        .post('/booking')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(futureBooking)
+        .expect(201);
+
+      // Now try to book the same tutor in the past with overlapping time
+      // This should show past date error, NOT tutor availability error
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const pastDateString = yesterday.toISOString().split('T')[0];
+
+      const pastBookingWithConflict = {
+        tutorId: testTutor.id,
+        date: pastDateString, // Past date
+        startTime: '10:00', // Same time as future booking (would conflict)
+        endTime: '12:00',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/booking')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(pastBookingWithConflict)
+        .expect(400);
+
+      // Should get past date error, not tutor availability error
+      expect(response.body.message).toContain(
+        'Cannot book a lesson in the past',
+      );
+      expect(response.body.message).not.toContain('Tutor is not available');
+    });
   });
 
   describe('GET /booking', () => {
@@ -277,7 +343,7 @@ describe('BookingController (e2e)', () => {
       const booking = await bookingRepository.save({
         user: testUser,
         tutor: testTutor,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '11:00',
       });
@@ -315,7 +381,7 @@ describe('BookingController (e2e)', () => {
       const booking = await bookingRepository.save({
         user: testUser,
         tutor: testTutor,
-        date: '2024-12-25',
+        date: '2026-12-25',
         startTime: '10:00',
         endTime: '11:00',
       });

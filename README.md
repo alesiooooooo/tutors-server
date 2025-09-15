@@ -1,98 +1,559 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Tutors Booking System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API for tutoring lessons booking platform.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 What the API does
 
-## Description
+### Authentication
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- User registration
+- User login
+- JWT tokens for authorization
 
-## Project setup
+### Tutor management
 
-```bash
-$ pnpm install
-```
+- View list of all tutors
 
-## Compile and run the project
+### Lesson booking
 
-```bash
-# development
-$ pnpm run start
+- Create new bookings
+- View your bookings
+- Delete bookings
+- Check schedule conflicts
 
-# watch mode
-$ pnpm run start:dev
+## 🔗 API Endpoints
 
-# production mode
-$ pnpm run start:prod
-```
+### Authentication
 
-## Run tests
+- `POST /auth/signup` - Register new user
+- `POST /auth/login` - User login
 
-```bash
-# unit tests
-$ pnpm run test
+### Tutors
 
-# e2e tests
-$ pnpm run test:e2e
+- `GET /tutor` - Get list of all tutors
 
-# test coverage
-$ pnpm run test:cov
-```
+### Bookings (requires authorization)
 
-## Deployment
+- `POST /booking` - Create new booking
+- `GET /booking` - Get your bookings
+- `DELETE /booking/:id` - Delete booking
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Documentation
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- `GET /api` - Swagger API documentation
+- `GET /` - Server health check
+
+## 🛠️ Installation
+
+### Local development
+
+1. **Clone repository**
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+git clone <repo-url>
+cd server
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+2. **Установить зависимости**
 
-## Resources
+```bash
+pnpm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+3. **Setup environment**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+cp .env.example .env
+# Edit .env with your database settings
+```
 
-## Support
+4. **Start application**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+pnpm start:dev
+```
 
-## Stay in touch
+### Docker
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+1. **Start with Docker Compose**
 
-## License
+```bash
+pnpm docker-start
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+2. **View logs**
+
+```bash
+pnpm docker-logs      # Application logs
+pnpm docker-logs-db   # Database logs
+```
+
+3. **Stop**
+
+```bash
+pnpm docker-stop      # Stop containers
+pnpm docker-reset     # Stop + clear volumes
+```
+
+## 🚨 Error handling
+
+### Validation errors (400)
+
+- **Past dates**: "Cannot book a lesson in the past. Please choose a future date and time."
+- **User schedule conflict**: "You already have a lesson scheduled at this time. Please choose a different time slot."
+- **Tutor schedule conflict**: "Tutor is not available during this time period."
+- **Missing fields**: Validation errors for missing required fields
+- **Invalid email format**: Email validation errors
+- **Short password**: Minimum 6 characters
+
+### Ошибки аутентификации (401)
+
+- **Неверные данные**: "Invalid credentials"
+- **Отсутствие токена**: "Unauthorized"
+- **Invalid token**: JWT verification errors
+
+### Not found errors (404)
+
+- **Booking not found**: "Booking not found"
+
+### Duplication errors (400)
+
+- **Email already taken**: "Email already taken"
+
+## 🧪 Testing
+
+```bash
+# Unit tests
+pnpm test
+
+# E2E tests
+pnpm test:e2e
+
+# Test coverage
+pnpm test:cov
+
+# Watch mode
+pnpm test:watch
+```
+
+## 📚 Commands
+
+```bash
+# Development
+pnpm start:dev       # Start with auto-reload
+pnpm start:debug     # Debug mode
+
+# Build
+pnpm build           # Build for production
+pnpm start:prod      # Start production build
+
+# Docker
+pnpm docker-start    # Start containers
+pnpm docker-stop     # Stop containers
+pnpm docker-reset    # Stop + clear volumes
+pnpm docker-logs     # Application logs
+pnpm docker-logs-db  # Database logs
+
+# Testing
+pnpm test            # Unit tests
+pnpm test:e2e        # End-to-end tests
+pnpm test:cov        # Coverage report
+pnpm test:watch      # Watch mode
+
+# Code quality
+pnpm lint            # ESLint with auto-fix
+pnpm format          # Prettier formatting
+```
+
+## 🎯 API usage examples
+
+### User registration
+
+```bash
+curl -X POST http://localhost:3010/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123","name":"John Doe"}'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:3010/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123"}'
+```
+
+### Create booking
+
+```bash
+curl -X POST http://localhost:3010/booking \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"tutorId":1,"date":"2024-12-25","startTime":"10:00","endTime":"11:00"}'
+```
+
+### Get tutors list
+
+```bash
+curl http://localhost:3010/tutor
+```
+
+## 📝 Environment variables
+
+```env
+# Database
+DATABASE_URL=postgresql://user:pass@host:port/db
+
+# JWT
+JWT_SECRET=your-secret-key
+
+# Application
+PORT=3000
+NODE_ENV=development
+```
+
+## 🔒 Business logic
+
+### Booking creation checks
+
+1. **Time check**: Cannot book lesson in the past
+2. **User check**: User should not have overlapping lessons
+3. **Tutor check**: Tutor should be available at specified time
+
+### Overlap checking algorithm
+
+```sql
+-- Time overlap check
+(booking.startTime < :endTime AND booking.endTime > :startTime)
+```
+
+### Error checking order
+
+1. Past time (priority over conflicts)
+2. User schedule conflict
+3. Tutor schedule conflict
+
+- **TypeScript 5.7.3** - Type-safe JavaScript
+
+### Database & ORM
+
+- **PostgreSQL** - Primary database
+- **TypeORM 0.3.26** - Object-Relational Mapping
+- **SQLite3 5.1.7** - Testing database
+
+### Authentication & Security
+
+- **JWT (@nestjs/jwt 11.0.0)** - JSON Web Tokens
+- **Passport 0.7.0** - Authentication middleware
+- **bcrypt 6.0.0** - Password hashing
+
+### Documentation & API
+
+- **Swagger (@nestjs/swagger 11.2.0)** - API documentation
+- **Express** - Web framework
+
+### Testing
+
+- **Jest 30.0.0** - Testing framework
+- **Supertest 7.0.0** - HTTP testing
+- **ts-jest 29.2.5** - TypeScript Jest preset
+
+### Development Tools
+
+- **ESLint 9.18.0** - Code linting
+- **Prettier 3.4.2** - Code formatting
+- **typescript-eslint 8.20.0** - TypeScript linting rules
+
+### Package Management
+
+- **pnpm** - Fast, disk space efficient package manager
+
+### Containerization
+
+- **Docker** - Containerization platform
+- **Docker Compose** - Multi-container orchestration
+
+## 📋 Features
+
+- User authentication (signup/login)
+- Tutor management
+- Lesson booking with conflict prevention
+- Time validation (no past bookings)
+- User and tutor availability checking
+- RESTful API with Swagger documentation
+
+## 🛠️ Installation
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm
+- PostgreSQL (or Docker)
+
+### Local Development
+
+1. **Clone repository**
+
+```bash
+git clone <repo-url>
+cd server
+```
+
+2. **Install dependencies**
+
+```bash
+pnpm install
+```
+
+3. **Setup environment**
+
+```bash
+cp .env.example .env
+# Edit .env with your database credentials
+```
+
+4. **Start PostgreSQL and run application**
+
+```bash
+pnpm start:dev
+```
+
+### Docker Development
+
+1. **Start with Docker Compose**
+
+```bash
+pnpm docker-start
+```
+
+2. **View logs**
+
+```bash
+pnpm docker-logs      # App logs
+pnpm docker-logs-db   # Database logs
+```
+
+3. **Stop containers**
+
+```bash
+pnpm docker-stop      # Stop containers
+pnpm docker-reset     # Stop + clear volumes
+```
+
+## 🔗 API Endpoints
+
+### Authentication
+
+- `POST /auth/signup` - User registration
+- `POST /auth/login` - User login
+
+### Tutors
+
+- `GET /tutor` - Get all tutors
+
+### Bookings (Protected)
+
+- `POST /booking` - Create new booking
+- `GET /booking` - Get user's bookings
+- `DELETE /booking/:id` - Delete booking
+
+### Documentation
+
+- `GET /api` - Swagger API documentation
+- `GET /` - Health check
+
+## 🧪 Testing
+
+```bash
+# Unit tests
+pnpm test
+
+# E2E tests
+pnpm test:e2e
+
+# Test coverage
+pnpm test:cov
+
+# Watch mode
+pnpm test:watch
+
+# Debug tests
+pnpm test:debug
+```
+
+### Test Configuration
+
+- **Framework**: Jest 30.0.0
+- **TypeScript**: ts-jest 29.2.5
+- **HTTP Testing**: supertest 7.0.0
+- **Coverage**: Automatic collection from src/\*_/_.(t|j)s
+- **Environment**: Node.js
+
+## 🚨 Error Handling
+
+### Business Logic Errors (400)
+
+- **Past bookings**: "Cannot book a lesson in the past"
+- **User conflicts**: "You already have a lesson scheduled at this time"
+- **Tutor conflicts**: "Tutor is not available during this time period"
+- **Invalid data**: Validation errors for missing/invalid fields
+
+### Authentication Errors (401)
+
+- **Invalid credentials**: "Invalid email or password"
+- **Missing token**: "Unauthorized access"
+- **Invalid token**: JWT verification failures
+
+### Not Found Errors (404)
+
+- **Booking not found**: When accessing non-existent bookings
+- **User not found**: When user doesn't exist
+
+### Validation Errors (400)
+
+- **Email format**: Invalid email addresses
+- **Password length**: Minimum 6 characters required
+- **Required fields**: Missing tutorId, date, startTime, endTime
+- **Time format**: Invalid time format (HH:MM expected)
+
+## 📊 Database Schema
+
+### Users
+
+```sql
+- id (Primary Key)
+- email (Unique)
+- password (Hashed)
+```
+
+### Tutors
+
+```sql
+- id (Primary Key)
+- name
+```
+
+### Bookings
+
+```sql
+- id (Primary Key)
+- date (YYYY-MM-DD)
+- startTime (HH:MM)
+- endTime (HH:MM)
+- userId (Foreign Key)
+- tutorId (Foreign Key)
+```
+
+## 🔒 Security Features
+
+- **JWT Authentication**: Secure token-based auth with @nestjs/jwt
+- **Password Hashing**: bcrypt 6.0.0 with salt
+- **Input Validation**: class-validator with comprehensive rules
+- **Database Security**: PostgreSQL not exposed externally in Docker
+- **Environment Variables**: Sensitive data in .env files
+- **Type Safety**: Full TypeScript coverage
+
+## 🐳 Docker Configuration
+
+### Services
+
+- **tutors-server**: NestJS app on port 3010
+- **tutors-postgres**: PostgreSQL database (internal only)
+
+### Images
+
+- **Node.js**: 20-alpine (lightweight)
+- **PostgreSQL**: 15-alpine
+
+### Security
+
+- PostgreSQL accessible only within Docker network
+- Strong passwords for database
+- Separate environments for dev/prod
+
+## 📝 Environment Variables
+
+```env
+# Database
+DATABASE_URL=postgresql://user:pass@host:port/db
+
+# JWT
+JWT_SECRET=your-secret-key
+
+# Application
+PORT=3000
+NODE_ENV=development
+```
+
+## 🚀 Deployment
+
+### Production Build
+
+```bash
+pnpm build
+pnpm start:prod
+```
+
+### Docker Production
+
+```bash
+docker compose up --build -d
+```
+
+## 📚 Scripts Reference
+
+```bash
+# Development
+pnpm start           # Start application
+pnpm start:dev       # Development with watch
+pnpm start:debug     # Debug mode
+
+# Building
+pnpm build           # Build for production
+pnpm start:prod      # Start production build
+
+# Docker
+pnpm docker-start    # Start containers
+pnpm docker-stop     # Stop containers
+pnpm docker-reset    # Reset with volume cleanup
+pnpm docker-logs     # View app logs
+pnpm docker-logs-db  # View database logs
+
+# Testing
+pnpm test            # Unit tests
+pnpm test:e2e        # End-to-end tests
+pnpm test:cov        # Coverage report
+pnpm test:watch      # Watch mode
+pnpm test:debug      # Debug tests
+
+# Code Quality
+pnpm lint            # ESLint with auto-fix
+pnpm format          # Prettier formatting
+```
+
+## 🎯 API Usage Examples
+
+### Register User
+
+```bash
+curl -X POST http://localhost:3010/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123","name":"John Doe"}'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:3010/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123"}'
+```
+
+### Create Booking
+
+```bash
+curl -X POST http://localhost:3010/booking \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"tutorId":1,"date":"2024-12-25","startTime":"10:00","endTime":"11:00"}'
+```
